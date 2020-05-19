@@ -39,7 +39,8 @@ _linux_script: &linux_script
         - ubuntu-toolchain-r-test
       packages:
         # See manual, doc/compiling.tex
-        - libpng12-dev
+        - scons
+        - libpng-dev
         - libjpeg-dev
         - libilmbase-dev
         - libxerces-c-dev
