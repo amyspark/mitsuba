@@ -1,31 +1,27 @@
 *DISCLAIMER: This is a **fork** of [the original repository](https://github.com/mitsuba-renderer/mitsuba). Report issues, pull requests, etc. by following the badges below. Thanks!*
 
-# Mitsuba renderer [![][issues]][issues-link] [![][pulls]][pulls-link] [![][stars]][stars-link] [![][license]][license-link] [![][travis]][travis-link] [![][appveyor]][appveyor-link]
+Mitsuba — Physically Based Renderer [![][issues]][issues-link] [![][pulls]][pulls-link] [![][stars]][stars-link] [![][license]][license-link] [![][travis]][travis-link] [![][appveyor]][appveyor-link]
+===================================
 
-Mitsuba is a physically-based, research-oriented renderer.
+http://mitsuba-renderer.org/
 
+## About
 
-## License
+Mitsuba is a research-oriented rendering system in the style of PBRT, from which it derives much inspiration. It is written in portable C++, implements unbiased as well as biased techniques, and contains heavy optimizations targeted towards current CPU architectures. Mitsuba is extremely modular: it consists of a small set of core libraries and over 100 different plugins that implement functionality ranging from materials and light sources to complete rendering algorithms.
 
-```c
-/*
-    This file is part of Mitsuba, a physically based rendering system.
+In comparison to other open source renderers, Mitsuba places a strong emphasis on experimental rendering techniques, such as path-based formulations of Metropolis Light Transport and volumetric modeling approaches. Thus, it may be of genuine interest to those who would like to experiment with such techniques that haven't yet found their way into mainstream renderers, and it also provides a solid foundation for research in this domain.
 
-    Copyright (c) 2007-2014 by Wenzel Jakob and others.
+The renderer currently runs on Linux, MacOS X and Microsoft Windows and makes use of SSE2 optimizations on x86 and x86_64 platforms. So far, its main use has been as a testbed for algorithm development in computer graphics, but there are many other interesting applications.
 
-    Mitsuba is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License Version 3
-    as published by the Free Software Foundation.
+Mitsuba comes with a command-line interface as well as a graphical frontend to interactively explore scenes. While navigating, a rough preview is shown that becomes increasingly accurate as soon as all movements are stopped. Once a viewpoint has been chosen, a wide range of rendering techniques can be used to generate images, and their parameters can be tuned from within the program.
 
-    Mitsuba is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+## Documentation
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-```
+For compilation, usage, and a full plugin reference, please see the [official documentation](http://mitsuba-renderer.org/docs.html).
+
+## Releases and scenes
+
+Pre-built binaries, as well as example scenes, are available on the [Mitsuba website](http://mitsuba-renderer.org/download.html).
 
 [issues]: https://img.shields.io/github/issues/mitsuba-renderer/mitsuba.svg (GitHub issues)
 [issues-link]: https://github.com/mitsuba-renderer/mitsuba/issues
