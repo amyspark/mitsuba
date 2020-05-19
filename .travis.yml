@@ -7,56 +7,71 @@ install: true
 git:
   depth: 1
 
-matrix:
+_osx_script: &osx_script
+  compiler: clang
+  # Avoid downloading again - see https://stackoverflow.com/questions/39930171/cache-brew-builds-with-travis-ci
+  cache:
+    directories:
+      - $HOME/Library/Caches/Homebrew
+  before_install:
+    # Travis needs to reload ruby before continuing - see https://github.com/travis-ci/travis-ci/issues/8552
+    - brew update
+    - brew install qt scons collada-dom
+    - git clone https://github.com/mitsuba-renderer/dependencies_macos dependencies --depth=1
+    # Let SCons see brewed Qt (for the utils) - and they go last to avoid interfering with Travis cache
+    - export PATH="$PATH:/usr/local/opt/qt/bin"
+    # Print XCode SDK path
+    - xcrun --show-sdk-path
+  script:
+    # https://github.com/mitsuba-renderer/mitsuba/issues/33
+    # /dev/null avoids polluting Travis log
+    - 2to3 -w ./build/SConscript.install > /dev/null
+    - 2to3 -w ./build/SConscript.configure > /dev/null
+    - scons -j2 --cfg=build/config-macos10.12-clang-x86_64-travis.py
+  after_failure:
+    # Poor man's send to S3
+    - cat config.log
+
+_linux_script: &linux_script
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        # See manual, doc/compiling.tex
+        - libpng12-dev
+        - libjpeg-dev
+        - libilmbase-dev
+        - libxerces-c-dev
+        - libboost-all-dev
+        - libopenexr-dev
+        - libglewmx-dev
+        - libxxf86vm-dev
+        - libeigen3-dev
+        - libfftw3-dev
+        - libcollada-dom-dev
+        - qt5-default
+        - libqt5opengl5-dev
+        - libqt5xmlpatterns5-dev
+  script:
+    # More than 1 job crashes travis when building python bindings
+    - scons -j1 --cfg=build/config-linux-gcc-debug.py
+
+
+jobs:
   include:
     - os: osx
-      osx_image: xcode8.3
-      compiler: clang
-      # Avoid downloading again - see https://stackoverflow.com/questions/39930171/cache-brew-builds-with-travis-ci
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-      before_install:
-        # Travis needs to reload ruby before continuing - see https://github.com/travis-ci/travis-ci/issues/8552
-        - brew update
-        - brew install qt scons collada-dom
-        - git clone https://github.com/mitsuba-renderer/dependencies_macos dependencies --depth=1
-        # Let SCons see brewed Qt (for the utils) - and they go last to avoid interfering with Travis cache
-        - export PATH="$PATH:/usr/local/opt/qt/bin"
-        # Print XCode SDK path
-        - xcrun --show-sdk-path
-      script:
-        # https://github.com/mitsuba-renderer/mitsuba/issues/33
-        # /dev/null avoids polluting Travis log
-        - 2to3 -w ./build/SConscript.install > /dev/null
-        - 2to3 -w ./build/SConscript.configure > /dev/null
-        - scons -j2 --cfg=build/config-macos10.12-clang-x86_64-travis.py
-      after_failure:
-        # Poor man's send to S3
-        - cat config.log
+      osx_image: xcode10.1
+      <<: *osx_script
+    - os: osx
+      osx_image: xcode11.3
+      <<: *osx_script
+    - os: osx
+      osx_image: xcode11.4
+      <<: *osx_script
     - os: linux
-      dist: trusty
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            # See manual, doc/compiling.tex
-            - libpng12-dev
-            - libjpeg-dev
-            - libilmbase-dev
-            - libxerces-c-dev
-            - libboost-all-dev
-            - libopenexr-dev
-            - libglewmx-dev
-            - libxxf86vm-dev
-            - libeigen3-dev
-            - libfftw3-dev
-            # not available on trusty - xenial and up
-            # - libcollada-dom-dev
-            - qt5-default
-            - libqt5opengl5-dev
-            - libqt5xmlpatterns5-dev
-      script:
-        # More than 1 job crashes travis when building python bindings
-        scons -j1 --cfg=build/config-linux-gcc-debug.py
+      dist: xenial
+      <<: *linux_script
+    - os: linux
+      dist: bionic
+      <<: *linux_script
